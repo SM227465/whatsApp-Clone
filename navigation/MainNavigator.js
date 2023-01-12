@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ChatListScreen from '../screens/ChatListScreen';
 import ChatSettingsScreen from '../screens/ChatSettingsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -45,6 +46,11 @@ const MainNavigator = (props) => {
         name='ChatSettings'
         component={ChatSettingsScreen}
         options={{ gestureEnabled: true, headerTitle: 'Settings', headerBackTitle: 'Back' }}
+      />
+      <Stack.Screen
+        name='ChatScreen'
+        component={ChatScreen}
+        options={{ headerBackTitle: 'Back', headerTitle: '' }}
       />
     </Stack.Navigator>
   );
