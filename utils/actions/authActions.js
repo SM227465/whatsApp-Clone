@@ -1,6 +1,6 @@
 import { getFirebaseApp } from '../firebaseHelper';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { getDatabase, set, child, ref } from 'firebase/database';
+import { getDatabase, set, child, ref, update } from 'firebase/database';
 import { authenticate, logout } from '../../store/authSlice';
 import { getUserData } from './userActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -102,4 +102,16 @@ export const userLogout = () => {
     clearTimeout(timer);
     dispatch(logout());
   };
+};
+
+export const updateSigninUserData = async (userId, newData) => {
+  if (newData.firstName && newData.lastName) {
+    const fullName = (newData.firstName + ' ' + newData.lastName).toLowerCase();
+    newData.fullName = fullName;
+  }
+
+  const dbRef = ref(getDatabase());
+  const childRef = child(dbRef, `users/${userId}`);
+
+  await update(childRef, newData);
 };

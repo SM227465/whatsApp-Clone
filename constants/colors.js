@@ -5,4 +5,5 @@ export default {
   nearlyWhite: '#f4f8f7',
   textColor: '#1c1e21',
   primary: '#32d48e',
+  red: '#e74c3c',
 };
