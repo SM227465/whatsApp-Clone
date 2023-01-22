@@ -22,6 +22,7 @@ const ProfileImage = (props) => {
   const source = props.uri ? { uri: props.uri } : userImage;
   const [image, setImage] = useState(source);
   const [isLoading, setIsLoading] = useState(false);
+  const showEditButton = props.showEditButton && props.showEditButton === true;
   const dispatch = useDispatch();
   const userId = props.userId;
 
@@ -51,8 +52,10 @@ const ProfileImage = (props) => {
       console.log(error);
     }
   };
+
+  const Container = showEditButton ? TouchableOpacity : View;
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <Container onPress={pickImage}>
       {isLoading ? (
         <View height={props.size} width={props.size} style={styles.loadingContainer}>
           <ActivityIndicator size={'small'} color={colors.primary} />
@@ -64,10 +67,12 @@ const ProfileImage = (props) => {
         />
       )}
 
-      <Tou style={styles.editIconContainer}>
-        <FontAwesome name='edit' size={15} color='black' />
-      </Tou>
-    </TouchableOpacity>
+      {showEditButton && !isLoading && (
+        <View style={styles.editIconContainer}>
+          <FontAwesome name='edit' size={15} color='black' />
+        </View>
+      )}
+    </Container>
   );
 };
 

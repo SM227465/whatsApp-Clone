@@ -1,4 +1,13 @@
-import { ref, getDatabase, child, get } from 'firebase/database';
+import {
+  ref,
+  getDatabase,
+  child,
+  get,
+  query,
+  orderByChild,
+  startAt,
+  endAt,
+} from 'firebase/database';
 import { getFirebaseApp } from '../firebaseHelper';
 
 export const getUserData = async (userId) => {
@@ -8,6 +17,33 @@ export const getUserData = async (userId) => {
     const userRef = child(dbRef, `users/${userId}`);
     const snapshot = await get(userRef);
     return snapshot.val();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const serchUsers = async (queryText) => {
+  const searchTerm = queryText.toLowerCase();
+
+  try {
+    const app = getFirebaseApp();
+    const dbRef = ref(getDatabase(app));
+    const userRef = child(dbRef, 'users');
+
+    const queryRef = query(
+      userRef,
+      orderByChild('fullName'),
+      startAt(searchTerm),
+      endAt(searchTerm + '\uf8ff')
+    );
+
+    const snapshot = await get(queryRef);
+
+    if (snapshot.exists) {
+      return snapshot.val();
+    }
+
+    return {};
   } catch (error) {
     console.log(error);
   }

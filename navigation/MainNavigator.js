@@ -1,5 +1,4 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -7,8 +6,10 @@ import ChatListScreen from '../screens/ChatListScreen';
 import ChatSettingsScreen from '../screens/ChatSettingsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ChatScreen from '../screens/ChatScreen';
+import NewChatScreen from '../screens/NewChatScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -41,17 +42,22 @@ const TabNavigator = () => {
 const MainNavigator = (props) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name='Home' component={TabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen
-        name='ChatSettings'
-        component={ChatSettingsScreen}
-        options={{ gestureEnabled: true, headerTitle: 'Settings', headerBackTitle: 'Back' }}
-      />
-      <Stack.Screen
-        name='ChatScreen'
-        component={ChatScreen}
-        options={{ headerBackTitle: 'Back', headerTitle: '' }}
-      />
+      <Stack.Group>
+        <Stack.Screen name='Home' component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen
+          name='ChatSettings'
+          component={ChatSettingsScreen}
+          options={{ gestureEnabled: true, headerTitle: 'Settings', headerBackTitle: 'Back' }}
+        />
+        <Stack.Screen
+          name='ChatScreen'
+          component={ChatScreen}
+          options={{ headerBackTitle: 'Back', headerTitle: '' }}
+        />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'containedModal' }}>
+        <Stack.Screen name='NewChat' component={NewChatScreen} />
+      </Stack.Group>
     </Stack.Navigator>
   );
 };
