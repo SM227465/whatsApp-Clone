@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,12 +13,50 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import backgroundImage from '../assets/images/droplet.jpeg';
 import colors from '../constants/colors';
+import { useSelector } from 'react-redux';
+import PageContainer from '../components/PageContainer';
+import Bubble from '../components/Bubble';
+import { createChat } from '../utils/actions/chatAction';
 
 const ChatScreen = (props) => {
+  const storedUsers = useSelector((state) => state.users.storedUsers);
+  const userData = useSelector((state) => state.auth.userData);
+
+  const [chatUsers, setChatUsers] = useState([]);
   const [messageText, setMessageText] = useState('');
-  const sendMessage = useCallback(() => {
+  const [chatId, setChatId] = useState(props.route?.params?.chatId);
+
+  const chatData = props.route?.params?.newChatData;
+
+  const getChatTitleFromName = () => {
+    const otherUserId = chatUsers.find((uid) => uid !== userData.userId);
+    const otherUserData = storedUsers[otherUserId];
+
+    return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
+  };
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerTitle: getChatTitleFromName(),
+    });
+
+    setChatUsers(chatData.users);
+  }, [chatUsers]);
+
+  const sendMessage = useCallback(async () => {
+    try {
+      let id = chatId;
+
+      if (!id) {
+        id = await createChat(userData.userId, props.route.params.newChatData);
+
+        setChatId(id);
+      }
+    } catch (error) {}
+
     setMessageText('');
-  }, [messageText]);
+  }, [messageText, chatId]);
+
   return (
     <SafeAreaView edges={['right', 'left', 'bottom']} style={styles.container}>
       <KeyboardAvoidingView
@@ -26,7 +64,11 @@ const ChatScreen = (props) => {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
         keyboardVerticalOffset={100}
       >
-        <ImageBackground source={backgroundImage} style={styles.backgroundImage}></ImageBackground>
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+          <PageContainer style={{ backgroundColor: 'transparent' }}>
+            {!chatId && <Bubble text='This is a new chat, Say hi!' type='system' />}
+          </PageContainer>
+        </ImageBackground>
 
         <View style={styles.inputContainer}>
           <TouchableOpacity style={styles.mediaBtn} onPress={() => console.log('Pressed')}>
