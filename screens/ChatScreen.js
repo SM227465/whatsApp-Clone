@@ -16,12 +16,15 @@ import colors from '../constants/colors';
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
 import Bubble from '../components/Bubble';
-import { createChat } from '../utils/actions/chatAction';
+import { createChat, sendTextMessage } from '../utils/actions/chatAction';
 
 const ChatScreen = (props) => {
   const storedUsers = useSelector((state) => state.users.storedUsers);
   const userData = useSelector((state) => state.auth.userData);
   const storedChats = useSelector((state) => state.chats.chatsData);
+  const chatMessages = useSelector((state) => state.messages.messagesData);
+
+  // console.log(chatMessages);
 
   const [chatUsers, setChatUsers] = useState([]);
   const [messageText, setMessageText] = useState('');
@@ -53,7 +56,11 @@ const ChatScreen = (props) => {
 
         setChatId(id);
       }
-    } catch (error) {}
+
+      await sendTextMessage(chatId, userData.userId, messageText);
+    } catch (error) {
+      console.log(error);
+    }
 
     setMessageText('');
   }, [messageText, chatId]);
