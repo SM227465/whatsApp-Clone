@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, TouchableWithoutFeedback, Image } from 'react-native';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 import colors from '../constants/colors';
 import uuid from 'react-native-uuid';
@@ -14,7 +14,7 @@ function formatAmPm(dateString) {
   let minutes = date.getMinutes();
   const ampm = hours >= 12 ? 'pm' : 'am';
   hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
+  hours = hours ? hours : 12;
   minutes = minutes < 10 ? '0' + minutes : minutes;
   return hours + ':' + minutes + ' ' + ampm;
 }
@@ -32,7 +32,8 @@ const MenuItem = (props) => {
 };
 
 const Bubble = (props) => {
-  const { text, type, messageId, userId, chatId, date, setReply, replyingTo, name } = props;
+  const { text, type, messageId, userId, chatId, date, setReply, replyingTo, name, imageUrl } =
+    props;
   const starredMessages = useSelector((state) => state.messages.starredMessages[chatId] ?? {});
   const storedUsers = useSelector((state) => state.users.storedUsers);
 
@@ -110,7 +111,9 @@ const Bubble = (props) => {
               name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
             />
           )}
-          <Text style={textStyle}> {text}</Text>
+          {!imageUrl && <Text style={textStyle}> {text}</Text>}
+
+          {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
 
           {dateString && (
             <View style={styles.timeContainer}>
@@ -203,6 +206,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'medium',
     letterSpacing: 0.3,
+  },
+
+  image: {
+    width: 300,
+    height: 300,
+    marginBottom: 5,
   },
 });
 
