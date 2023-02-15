@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View as Tou,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import userImage from '../assets/images/defaultProfileImage.jpeg';
 import colors from '../constants/colors';
 import { FontAwesome } from '@expo/vector-icons';
@@ -16,14 +8,17 @@ import { updateSigninUserData } from '../utils/actions/authActions';
 import { useDispatch } from 'react-redux';
 import { updateLoginUserData } from '../store/authSlice';
 
-// console.log(typeof userImage);
-
 const ProfileImage = (props) => {
+  const dispatch = useDispatch();
+
   const source = props.uri ? { uri: props.uri } : userImage;
+
   const [image, setImage] = useState(source);
   const [isLoading, setIsLoading] = useState(false);
+
   const showEditButton = props.showEditButton && props.showEditButton === true;
-  const dispatch = useDispatch();
+  const showRemoveButton = props.showRemoveButton && props.showRemoveButton === true;
+
   const userId = props.userId;
 
   const pickImage = async () => {
@@ -53,9 +48,10 @@ const ProfileImage = (props) => {
     }
   };
 
-  const Container = showEditButton ? TouchableOpacity : View;
+  const Container = props.onPress || showEditButton ? TouchableOpacity : View;
+
   return (
-    <Container onPress={pickImage}>
+    <Container onPress={props.onPress || pickImage} style={props.style}>
       {isLoading ? (
         <View height={props.size} width={props.size} style={styles.loadingContainer}>
           <ActivityIndicator size={'small'} color={colors.primary} />
@@ -70,6 +66,12 @@ const ProfileImage = (props) => {
       {showEditButton && !isLoading && (
         <View style={styles.editIconContainer}>
           <FontAwesome name='edit' size={15} color='black' />
+        </View>
+      )}
+
+      {showRemoveButton && !isLoading && (
+        <View style={styles.removeIconContainer}>
+          <FontAwesome name='close' size={15} color='black' />
         </View>
       )}
     </Container>
@@ -95,6 +97,15 @@ const styles = StyleSheet.create({
   loadingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  removeIconContainer: {
+    position: 'absolute',
+    bottom: -3,
+    right: -3,
+    backgroundColor: colors.lightGray,
+    borderRadius: 20,
+    padding: 3,
   },
 });
 
