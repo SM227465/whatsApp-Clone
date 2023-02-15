@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFirebaseApp } from '../utils/firebaseHelper';
 import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { setChatsData } from '../store/chatSlice';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, View } from 'react-native';
 import colors from '../constants/colors';
 import commonStyle from '../constants/commonStyle';
 import { setStoredUsers } from '../store/userSlice';
@@ -166,7 +166,11 @@ const MainNavigator = (props) => {
     </View>;
   }
 
-  return <StackNavigator />;
+  return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : null}>
+      <StackNavigator />
+    </KeyboardAvoidingView>
+  );
 };
 
 export default MainNavigator;
