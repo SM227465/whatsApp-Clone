@@ -2,14 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
-  Button,
   ImageBackground,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   FlatList,
-  Text,
   Image,
   ActivityIndicator,
 } from 'react-native';
@@ -19,11 +15,13 @@ import backgroundImage from '../assets/images/droplet.jpeg';
 import colors from '../constants/colors';
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
+import CustomHeaderButton from '../components/CustomHeaderButton';
 import Bubble from '../components/Bubble';
 import { createChat, sendImage, sendTextMessage } from '../utils/actions/chatAction';
 import ReplyTo from '../components/ReplyTo';
 import { LaunchImagePicker, openCamera, uploadImageAsync } from '../utils/ImagePickerHelper';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -75,6 +73,25 @@ const ChatScreen = (props) => {
   useEffect(() => {
     props.navigation.setOptions({
       headerTitle: title,
+      headerRight: () => {
+        return (
+          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            {chatId && (
+              <Item
+                title='Chat settings'
+                iconName='settings-outline'
+                onPress={() =>
+                  chatData.isGroupChat
+                    ? props.navigation.navigate()
+                    : props.navigation.navigate('Contact', {
+                        uid: chatUsers.find((uid) => uid !== userData.userId),
+                      })
+                }
+              />
+            )}
+          </HeaderButtons>
+        );
+      },
     });
 
     setChatUsers(chatData.users);

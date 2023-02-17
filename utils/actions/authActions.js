@@ -2,7 +2,7 @@ import { getFirebaseApp } from '../firebaseHelper';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { getDatabase, set, child, ref, update } from 'firebase/database';
 import { authenticate, logout } from '../../store/authSlice';
-import { getUserData } from './userActions';
+import { getUserChats } from './userActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let timer;
@@ -49,7 +49,7 @@ export const signin = (email, password) => {
       const expiryDate = new Date(expirationTime);
       const timeNow = new Date();
       const miliSecondUntilExpiry = expiryDate - timeNow;
-      const userData = await getUserData(uid);
+      const userData = await getUserChats(uid);
       dispatch(authenticate({ token: accessToken, userData }));
       saveDataToStorage(accessToken, uid, expiryDate);
       timer = setTimeout(() => {
