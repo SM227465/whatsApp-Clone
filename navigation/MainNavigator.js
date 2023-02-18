@@ -57,7 +57,12 @@ const StackNavigator = () => {
         <Stack.Screen
           name='ChatSettings'
           component={ChatSettingsScreen}
-          options={{ gestureEnabled: true, headerTitle: 'Settings', headerBackTitle: 'Back' }}
+          options={{
+            gestureEnabled: true,
+            headerTitle: '',
+            headerBackTitle: 'Back',
+            headerShadowVisible: false,
+          }}
         />
         <Stack.Screen
           name='Contact'

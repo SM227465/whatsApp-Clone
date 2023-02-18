@@ -7,6 +7,7 @@ import { LaunchImagePicker, uploadImageAsync } from '../utils/ImagePickerHelper'
 import { updateSigninUserData } from '../utils/actions/authActions';
 import { useDispatch } from 'react-redux';
 import { updateLoginUserData } from '../store/authSlice';
+import { updateChatData } from '../utils/actions/chatAction';
 
 const ProfileImage = (props) => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const ProfileImage = (props) => {
   const showRemoveButton = props.showRemoveButton && props.showRemoveButton === true;
 
   const userId = props.userId;
+  const chatId = props.chatId;
 
   const pickImage = async () => {
     try {
@@ -30,16 +32,21 @@ const ProfileImage = (props) => {
       }
 
       setIsLoading(true);
-      const uploadUrl = await uploadImageAsync(tempUri);
+      const uploadUrl = await uploadImageAsync(tempUri, chatId !== undefined);
       setIsLoading(false);
 
       if (!uploadUrl) {
         throw new Error('Could not upload image');
       }
-      const newData = { profilePicture: uploadUrl };
 
-      await updateSigninUserData(userId, newData);
-      dispatch(updateLoginUserData({ newData: newData }));
+      if (chatId) {
+        await updateChatData(chatId, userId, { chatImage: uploadUrl });
+      } else {
+        const newData = { profilePicture: uploadUrl };
+
+        await updateSigninUserData(userId, newData);
+        dispatch(updateLoginUserData({ newData: newData }));
+      }
 
       setImage({ uri: uploadUrl });
     } catch (error) {
