@@ -2,21 +2,36 @@ import React from 'react';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import colors from '../constants/colors';
 import ProfileImage from './ProfileImage';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
+
+const imageSize = 40;
 
 const DataItem = (props) => {
-  const { title, subTitle, image, type, isChecked } = props;
+  const { title, subTitle, image, type, isChecked, icon } = props;
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
       <View style={styles.container}>
-        <ProfileImage uri={image} size={40} />
+        {!icon && <ProfileImage uri={image} size={imageSize} />}
+        {icon && (
+          <View style={styles.leftIconContainer}>
+            <AntDesign name={icon} size={20} color={colors.blue} />
+          </View>
+        )}
         <View style={styles.textContainer}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text
+            style={{
+              ...styles.title,
+              ...{ color: type === 'button' ? colors.blue : colors.textColor },
+            }}
+            numberOfLines={1}
+          >
             {title}
           </Text>
-          <Text style={styles.subTitle} numberOfLines={1}>
-            {subTitle}
-          </Text>
+          {subTitle && (
+            <Text style={styles.subTitle} numberOfLines={1}>
+              {subTitle}
+            </Text>
+          )}
         </View>
         {type === 'checkBox' && (
           <View style={{ ...styles.iconContainer, ...(isChecked && styles.checkedStyle) }}>
@@ -71,6 +86,15 @@ const styles = StyleSheet.create({
   checkedStyle: {
     backgroundColor: colors.primary,
     borderColor: 'transparent',
+  },
+
+  leftIconContainer: {
+    backgroundColor: colors.extraLightGray,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: imageSize,
+    height: imageSize,
   },
 });
 

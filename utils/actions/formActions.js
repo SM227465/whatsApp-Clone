@@ -14,5 +14,7 @@ export const validateInput = (inputId, inputValue) => {
     return validatePassword(inputId, inputValue);
   } else if (inputId === 'about') {
     return validateLength(inputId, inputValue, true, 0, 100);
+  } else if (inputId === 'chatName') {
+    return validateLength(inputId, inputValue, false, 2, 30);
   }
 };
