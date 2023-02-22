@@ -81,6 +81,12 @@ const Bubble = (props) => {
       bubbleStyle.backgroundColor = '#f2f2f2';
       break;
 
+    case 'info':
+      bubbleStyle.backgroundColor = 'white';
+      bubbleStyle.alignItems = 'center';
+      textStyle.color = colors.textColor;
+      break;
+
     default:
       break;
   }
@@ -103,7 +109,7 @@ const Bubble = (props) => {
         style={{ width: '100%' }}
       >
         <View style={bubbleStyle}>
-          {name && <Text style={styles.name}>{name}</Text>}
+          {name && type !== 'info' && <Text style={styles.name}>{name}</Text>}
           {replyingToUser && (
             <Bubble
               type='reply'
@@ -115,7 +121,7 @@ const Bubble = (props) => {
 
           {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
 
-          {dateString && (
+          {dateString && type !== 'info' && (
             <View style={styles.timeContainer}>
               {isStarred && (
                 <FontAwesome

@@ -116,6 +116,10 @@ const MainNavigator = (props) => {
           const data = chatSnapshot.val();
 
           if (data) {
+            if (!data.users.includes(userData.userId)) {
+              return;
+            }
+
             data.key = chatSnapshot.key;
 
             data.users.forEach((userId) => {
