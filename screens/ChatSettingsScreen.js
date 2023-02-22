@@ -7,7 +7,7 @@ import Input from '../components/Input';
 import ProfileImage from '../components/ProfileImage';
 import { reducer } from '../utils/reduceres/formReducer';
 import { validateLength } from '../utils/validationConstraints';
-import { updateChatData } from '../utils/actions/chatAction';
+import { removeUserFromChat, updateChatData } from '../utils/actions/chatAction';
 import colors from '../constants/colors';
 import SubmitButton from '../components/SubmitButton';
 import { validateInput } from '../utils/actions/formActions';
@@ -15,7 +15,7 @@ import DataItem from '../components/DataItem';
 
 const ChatSettingsScreen = (props) => {
   const chatId = props.route.params.chatId;
-  const chatData = useSelector((state) => state.chats.chatsData[chatId]);
+  const chatData = useSelector((state) => state.chats.chatsData[chatId] || {});
   const userData = useSelector((state) => state.auth.userData);
   const storedUsers = useSelector((state) => state.users.storedUsers);
 
@@ -69,6 +69,24 @@ const ChatSettingsScreen = (props) => {
     return currentValues.chatName !== chatData.chatName;
   };
 
+  const leaveChat = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      await removeUserFromChat(userData, userData, chatData);
+
+      props.navigation.popToTop();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [props.navigation, isLoading]);
+
+  if (!chatData.users) {
+    return null;
+  }
+
   return (
     <PageContainer>
       <PageTitle text='Chat Settings' />
@@ -104,7 +122,7 @@ const ChatSettingsScreen = (props) => {
                 subTitle={currentUser.about}
                 type={uid !== userData.userId && 'link'}
                 onPress={() =>
-                  uid !== userData.userId && props.navigation.navigate('Contact', { uid })
+                  uid !== userData.userId && props.navigation.navigate('Contact', { uid, chatId })
                 }
               />
             );
@@ -126,6 +144,14 @@ const ChatSettingsScreen = (props) => {
           )
         )}
       </ScrollView>
+      {
+        <SubmitButton
+          title='Leave chat'
+          color={colors.red}
+          style={{ marginBottom: 20 }}
+          onPress={() => leaveChat()}
+        />
+      }
     </PageContainer>
   );
 };
