@@ -111,7 +111,7 @@ const ChatSettingsScreen = (props) => {
         <View style={styles.sectionContainer}>
           <Text style={styles.heading}>{chatData.users.length} Participants</Text>
           <DataItem title='Add users' icon='plus' type='button' />
-          {chatData.users.map((uid) => {
+          {chatData.users.slice(0, 4).map((uid) => {
             const currentUser = storedUsers[uid];
 
             return (
@@ -127,6 +127,22 @@ const ChatSettingsScreen = (props) => {
               />
             );
           })}
+
+          {chatData.users.length > 4 && (
+            <DataItem
+              type={'link'}
+              title='View all'
+              hideImage={true}
+              onPress={() =>
+                props.navigation.navigate('DataList', {
+                  title: 'Participants',
+                  data: chatData.users,
+                  type: 'users',
+                  chatId: chatId,
+                })
+              }
+            />
+          )}
         </View>
 
         {showSuccessMessage && <Text>Saved!</Text>}
