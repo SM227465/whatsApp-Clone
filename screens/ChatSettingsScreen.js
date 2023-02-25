@@ -21,6 +21,7 @@ const ChatSettingsScreen = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const starredMessages = useSelector((state) => state.messages.starredMessages[chatId] ?? {});
 
   const initialState = {
     inputValues: {
@@ -196,7 +197,20 @@ const ChatSettingsScreen = (props) => {
             />
           )
         )}
+        <DataItem
+          type={'link'}
+          title='Starred messages'
+          hideImage={true}
+          onPress={() =>
+            props.navigation.navigate('DataList', {
+              title: 'Starred messages',
+              data: Object.values(starredMessages),
+              type: 'messages',
+            })
+          }
+        />
       </ScrollView>
+
       {
         <SubmitButton
           title='Leave chat'
