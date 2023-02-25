@@ -8,6 +8,7 @@ import {
   startAt,
   endAt,
   remove,
+  push,
 } from 'firebase/database';
 import { getFirebaseApp } from '../firebaseHelper';
 
@@ -42,6 +43,19 @@ export const deleteUserChat = async (userId, key) => {
     const chatRef = child(dbRef, `userChats/${userId}/${key}`);
 
     await remove(chatRef);
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const addUserChat = async (userId, chatId) => {
+  try {
+    const app = getFirebaseApp();
+    const dbRef = ref(getDatabase(app));
+    const chatRef = child(dbRef, `userChats/${userId}`);
+
+    await push(chatRef, chatId);
   } catch (error) {
     console.log(error);
     throw new Error(error);

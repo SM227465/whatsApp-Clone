@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
@@ -7,7 +7,7 @@ import Input from '../components/Input';
 import ProfileImage from '../components/ProfileImage';
 import { reducer } from '../utils/reduceres/formReducer';
 import { validateLength } from '../utils/validationConstraints';
-import { removeUserFromChat, updateChatData } from '../utils/actions/chatAction';
+import { addUsersToChat, removeUserFromChat, updateChatData } from '../utils/actions/chatAction';
 import colors from '../constants/colors';
 import SubmitButton from '../components/SubmitButton';
 import { validateInput } from '../utils/actions/formActions';
@@ -35,6 +35,32 @@ const ChatSettingsScreen = (props) => {
   };
 
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
+
+  const selectedUsers = props.route.params && props.route.params.selectedUsers;
+
+  useEffect(() => {
+    if (!selectedUsers) {
+      return;
+    }
+
+    const selectedUsersData = [];
+
+    selectedUsers.forEach((uid) => {
+      if (uid === userData.userId) {
+        return;
+      }
+
+      if (!storedUsers[uid]) {
+        console.log('No user data found in the data store');
+        return;
+      }
+
+      selectedUsersData.push(storedUsers[uid]);
+    });
+
+    // console.log(selectedUsersData);
+    addUsersToChat(userData, selectedUsersData, chatData);
+  }, [selectedUsers]);
 
   const inputChangeHandler = useCallback(
     (inputId, inputValue) => {
@@ -110,7 +136,18 @@ const ChatSettingsScreen = (props) => {
 
         <View style={styles.sectionContainer}>
           <Text style={styles.heading}>{chatData.users.length} Participants</Text>
-          <DataItem title='Add users' icon='plus' type='button' />
+          <DataItem
+            title='Add users'
+            icon='plus'
+            type='button'
+            onPress={() =>
+              props.navigation.navigate('NewChat', {
+                isGroupChat: true,
+                existingUsers: chatData.users,
+                chatId: chatId,
+              })
+            }
+          />
           {chatData.users.slice(0, 4).map((uid) => {
             const currentUser = storedUsers[uid];
 
