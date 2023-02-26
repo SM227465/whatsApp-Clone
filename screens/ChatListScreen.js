@@ -62,6 +62,8 @@ const ChatListScreen = (props) => {
       navigationProps = {
         newChatData: { users: chatUsers, isGroupChat: selectedUserList !== undefined, chatName },
       };
+
+      // console.log('here', navigationProps);
     }
 
     props.navigation.navigate('ChatScreen', navigationProps);
