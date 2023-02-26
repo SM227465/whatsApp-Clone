@@ -103,6 +103,7 @@ const NewChatScreen = (props) => {
 
       setSelectedUsers(newSelectedUsers);
     } else {
+      // TODO: bug
       props.navigation.navigate('ChatList', { selectedUserId: userId });
     }
   };
